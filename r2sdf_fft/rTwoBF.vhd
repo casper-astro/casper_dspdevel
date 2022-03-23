@@ -137,9 +137,17 @@ begin
 	------------------------------------------------------------------------------------
 	-- PRE-EMPT overflow in addition and subtraction
 	------------------------------------------------------------------------------------
-	ovflw_imm(0) <= (S_ADD_OVFLW_DET(in_a_dly, in_b, out_c_buf) or S_SUB_OVFLW_DET(in_a_dly, in_b, out_d_ely));
-	ovflw <= ovflw_dly(0) when in_val = '1' else ovflw_imm(0);
-
+	process (clk)
+	begin
+		if rising_edge(clk) then
+			ovflw_imm(0) <= (S_ADD_OVFLW_DET(in_a_dly, in_b, out_c_buf) or S_SUB_OVFLW_DET(in_a_dly, in_b, out_d_ely));
+			if in_val ='1' then
+			  ovflw <= ovflw_dly(0);
+			else
+			  ovflw <= ovflw_imm(0);
+			end if;
+		end if;
+	end process;
 	-- BF function: add, subtract or pass the data on dependent on in_sel
 	out_c_buf <= ADD_SVEC(in_a_dly, in_b, out_c'length) when in_sel = '1' else in_a_dly;
 	out_c 		<= out_c_buf;

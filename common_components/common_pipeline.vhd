@@ -34,8 +34,6 @@ ENTITY common_pipeline IS
 		rst     : IN  STD_LOGIC := '0'; --! Reset signal
 		clk     : IN  STD_LOGIC;        --! Input clock signal
 		clken   : IN  STD_LOGIC := '1'; --! Enable clock
-		in_clr  : IN  STD_LOGIC := '0'; --! Clear input
-		in_en   : IN  STD_LOGIC := '1'; --! Enable input
 		in_dat  : IN  STD_LOGIC_VECTOR(g_in_dat_w - 1 DOWNTO 0); --! Input data
 		out_dat : OUT STD_LOGIC_VECTOR(g_out_dat_w - 1 DOWNTO 0) --! Output data
 	);
@@ -56,22 +54,18 @@ BEGIN
 		BEGIN
 			IF rst = '1' THEN
 				out_dat_p(1 TO g_pipeline) <= (OTHERS => c_reset_value);
-			ELSIF rising_edge(clk) THEN
-				IF clken = '1' THEN
-					IF in_clr = '1' THEN
-						out_dat_p(1 TO g_pipeline) <= (OTHERS => c_reset_value);
-					ELSIF in_en = '1' THEN
+			ELSIF rising_edge(clk) AND clken ='1' THEN
 						out_dat_p(1 TO g_pipeline) <= out_dat_p(0 TO g_pipeline - 1);
-					END IF;
-				END IF;
 			END IF;
 		END PROCESS;
 	END GENERATE;
 
-	out_dat_p(0) <= RESIZE_SVEC(in_dat, out_dat'LENGTH) WHEN g_representation = "SIGNED"
-	                ELSE RESIZE_UVEC(in_dat, out_dat'LENGTH) WHEN g_representation = "UNSIGNED"
-	              ;
-
+	gen_out_dat_p_signed : IF g_representation = "SIGNED" GENERATE
+		out_dat_p(0) <= RESIZE_SVEC(in_dat, out_dat'LENGTH);
+	END GENERATE;
+	gen_out_dat_p_unsigned : IF g_representation = "UNSIGNED" GENERATE
+		out_dat_p(0) <= RESIZE_UVEC(in_dat, out_dat'LENGTH);
+	END GENERATE;
 	out_dat <= out_dat_p(g_pipeline);
 
 END rtl;

@@ -41,8 +41,6 @@ PACKAGE common_components_pkg IS
 			rst     : IN  STD_LOGIC := '0';
 			clk     : IN  STD_LOGIC;
 			clken   : IN  STD_LOGIC := '1';
-			in_clr  : IN  STD_LOGIC := '0';
-			in_en   : IN  STD_LOGIC := '1';
 			in_dat  : IN  STD_LOGIC_VECTOR(g_in_dat_w - 1 DOWNTO 0);
 			out_dat : OUT STD_LOGIC_VECTOR(g_out_dat_w - 1 DOWNTO 0)
 		);

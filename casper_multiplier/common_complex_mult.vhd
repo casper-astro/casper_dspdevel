@@ -85,7 +85,6 @@ ARCHITECTURE str OF common_complex_mult IS
 
 	SIGNAL result_re : STD_LOGIC_VECTOR(g_out_p_w - 1 DOWNTO 0);
 	SIGNAL result_im : STD_LOGIC_VECTOR(g_out_p_w - 1 DOWNTO 0);
-	signal in_clr    : STD_LOGIC := '0';
 	signal in_en     : STD_LOGIC := '1';
 
 BEGIN
@@ -103,8 +102,6 @@ BEGIN
 			rst     => rst,
 			clk     => clk,
 			clken   => clken,
-			in_clr  => in_clr,
-			in_en   => in_en,
 			in_dat  => in_val,
 			out_dat => out_val
 		);
@@ -150,8 +147,6 @@ BEGIN
 			rst     => rst,
 			clk     => clk,
 			clken   => clken,
-			in_clr  => in_clr,
-			in_en   => in_en,
 			in_dat  => STD_LOGIC_VECTOR(result_re),
 			out_dat => out_pr
 		);
@@ -167,8 +162,6 @@ BEGIN
 			rst     => rst,
 			clk     => clk,
 			clken   => clken,
-			in_clr  => in_clr,
-			in_en   => in_en,
 			in_dat  => STD_LOGIC_VECTOR(result_im),
 			out_dat => out_pi
 		);

@@ -67,7 +67,7 @@ BEGIN
     PORT MAP (
       rst     => rst,
       clk     => clk,
-      in_en   => wr_en(I),
+      clken   => wr_en(I),
       in_dat  => reg_dat(I+1),
       out_dat => reg_dat(I)
     );

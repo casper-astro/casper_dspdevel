@@ -34,8 +34,6 @@ ENTITY common_pipeline_sl IS
 		rst     : IN  STD_LOGIC := '0'; --! Reset signal
 		clk     : IN  STD_LOGIC;        --! Clock input
 		clken   : IN  STD_LOGIC := '1'; --! Clock enable signal
-		in_clr  : IN  STD_LOGIC := '0'; --! Clear input signal 
-		in_en   : IN  STD_LOGIC := '1'; --! Enable input
 		in_dat  : IN  STD_LOGIC;        --! Signal used to pass data to common_pipeline
 		out_dat : OUT STD_LOGIC         --! Output valid signal
 	);
@@ -63,8 +61,6 @@ BEGIN
 			rst     => rst,
 			clk     => clk,
 			clken   => clken,
-			in_clr  => in_clr,
-			in_en   => in_en,
 			in_dat  => in_dat_slv,
 			out_dat => out_dat_slv
 		);

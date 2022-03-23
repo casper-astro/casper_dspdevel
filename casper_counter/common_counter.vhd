@@ -30,7 +30,7 @@
 --!   via ceil_log2(g_max+1)>g_width and use this to init the cnt_max input.
 
 --! Use standard library logic elements and common_pkg_lib
-LIBRARY IEEE, common_pkg_lib;
+LIBRARY IEEE, common_pkg_lib, common_components_lib;
 USE IEEE.std_logic_1164.all;
 USE common_pkg_lib.common_pkg.ALL;
 
@@ -85,38 +85,38 @@ END common_counter;
 ARCHITECTURE rtl OF common_counter IS
 
 	CONSTANT zeros    : STD_LOGIC_VECTOR(count'RANGE) := (OTHERS => '0'); --! used to check if cnt_max is zero
-	SIGNAL reg_count  : STD_LOGIC_VECTOR(count'RANGE) := TO_SVEC(g_init, g_width); --! in case rst is not used
+	SIGNAL s_count  : STD_LOGIC_VECTOR(count'RANGE) := TO_SVEC(g_init, g_width); --! in case rst is not used
 	SIGNAL nxt_count  : STD_LOGIC_VECTOR(count'RANGE) := TO_SVEC(g_init, g_width); --! to avoid Warning: NUMERIC_STD.">=": metavalue detected, returning FALSE, when using unsigned()
 	SIGNAL comb_count : STD_LOGIC_VECTOR(count'RANGE) := TO_SVEC(g_init, g_width); --! to avoid Warning: NUMERIC_STD.">=": metavalue detected, returning FALSE, when using unsigned()
 
 BEGIN
 
-	comb_count <= nxt_count;
-
-	count <= comb_count WHEN g_latency = 0 ELSE reg_count;
-
+	count <= s_count;
 	ASSERT g_step_size /= 0 REPORT "common_counter: g_step_size must be /= 0" SEVERITY FAILURE;
 
-	p_clk : PROCESS(rst, clk)
+	u_pipeline_count : entity common_components_lib.common_pipeline 
+		generic map (
+			g_pipeline  => g_latency, -- Pipeline + one stage for allignment
+			g_in_dat_w  => g_width,
+			g_out_dat_w => g_width
+		)
+		port map (
+			clk     => clk,
+			rst		=> rst,
+			clken	=> clken,
+			in_dat  => nxt_count,
+			out_dat => s_count
+		);
+		
+	p_count : PROCESS(s_count, cnt_clr, cnt_en, cnt_ld, load, cnt_max)
 	BEGIN
-		IF rst = '1' THEN
-			reg_count <= TO_SVEC(g_init, g_width);
-		ELSIF rising_edge(clk) THEN
-			IF clken = '1' THEN
-				reg_count <= nxt_count;
-			END IF;
-		END IF;
-	END PROCESS;
-
-	p_count : PROCESS(reg_count, cnt_clr, cnt_en, cnt_ld, load, cnt_max)
-	BEGIN
-		nxt_count <= reg_count;
-		IF cnt_clr = '1' OR (reg_count = cnt_max AND cnt_max /= zeros) THEN
+		nxt_count <= s_count;
+		IF cnt_clr = '1' OR (s_count = cnt_max AND cnt_max /= zeros) THEN
 			nxt_count <= (OTHERS => '0');
 		ELSIF cnt_ld = '1' THEN
 			nxt_count <= load;
 		ELSIF cnt_en = '1' THEN
-			nxt_count <= INCR_UVEC(reg_count, g_step_size);
+			nxt_count <= INCR_UVEC(s_count, g_step_size);
 		END IF;
 	END PROCESS;
 

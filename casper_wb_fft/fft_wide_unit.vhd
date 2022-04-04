@@ -30,7 +30,7 @@
 --              sync interval should be larger than the total pipeline
 --              stages of the wideband fft. 
 
-library ieee, common_pkg_lib, casper_ram_lib, dp_pkg_lib, r2sdf_fft_lib, casper_requantize_lib;
+library ieee, common_pkg_lib, casper_ram_lib, r2sdf_fft_lib, casper_requantize_lib;
 use IEEE.std_logic_1164.all;
 use common_pkg_lib.common_pkg.all;
 use casper_ram_lib.common_ram_pkg.all;
@@ -51,13 +51,13 @@ entity fft_wide_unit is
 		g_twid_file_stem	: string			:= c_twid_file_stem		--! path stem for twiddle factors
 	);
 	port(
-		clken           	: in  std_logic := '1';									--! Clock enable
-		rst             	: in  std_logic := '0';									--! Reset
-		clk             	: in  std_logic := '1';									--! Clock
-		shiftreg 		    : in  std_logic_vector(ceil_log2(g_fft.nof_points) - 1 DOWNTO 0);			--! Shift register
-		in_fft_sosi_arr     : in  t_fft_sosi_arr_in(g_fft.wb_factor -1 downto 0);	--! Input data array (wb_factor wide)
-		ovflw				: out std_logic_vector(ceil_log2(g_fft.nof_points) - 1 DOWNTO 0);			--!	Overflow register
-		out_fft_sosi_arr    : out t_fft_sosi_arr_out(g_fft.wb_factor -1 downto 0)	--! Output data array (wb_factor wide)
+		clken           	: in  std_logic := '1';																--! Clock enable
+		rst             	: in  std_logic := '0';																--! Reset
+		clk             	: in  std_logic := '1';																--! Clock
+		shiftreg 		    : in  std_logic_vector(ceil_log2(g_fft.nof_points) - 1 DOWNTO 0) := (others=>'1');	--! Shift register
+		in_fft_sosi_arr     : in  t_fft_sosi_arr_in(g_fft.wb_factor -1 downto 0) := (others=>c_fft_sosi_rst_in);			--! Input data array (wb_factor wide)
+		ovflw				: out std_logic_vector(ceil_log2(g_fft.nof_points) - 1 DOWNTO 0);					--!	Overflow register
+		out_fft_sosi_arr    : out t_fft_sosi_arr_out(g_fft.wb_factor -1 downto 0)								--! Output data array (wb_factor wide)
 	);
 end entity fft_wide_unit;
 

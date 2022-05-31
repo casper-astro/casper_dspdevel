@@ -164,8 +164,7 @@ begin
 				g_dont_flip_channels => g_dont_flip_channels,
 				g_nof_points         => g_fft.nof_points,
 				g_nof_chan           => g_fft.nof_chan,
-				g_ram_primitive 	 => g_ram_primitive,
-				g_in_place           => g_fft.pipe_reo_in_place
+				g_ram_primitive 	 => g_ram_primitive
 			)
 			port map(
 				clken   => clken,
